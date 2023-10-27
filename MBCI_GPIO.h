@@ -3,7 +3,7 @@
  * @author YuLin Wang (2677657424@qq.com)
  * @brief GPIO 设备的抽象，用于一般场景下的 GPIO 操作
  * @version 0.1
- * @date 2023-10-25
+ * @date 2023-10-26
  *
  * @copyright Copyright (c) 2023
  *
@@ -52,17 +52,6 @@ enum mbci_gpio_mode
      */
     MBCI_GPIO_OUT_OD = 0x11,
 };
-
-/**
- * @brief GPIO 输出速度选择
- * 
- */
-
-
-/**  
-  * @brief GPIO 命名
-  */
-//char *name = "PA.00";
 
 /**
  * @brief 初始化指定的 GPIO 引脚
@@ -211,12 +200,10 @@ void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
  */
 void mbci_gpio_set(char *name, int value)
 {
-	uint16_t PinState;
-	PinState = 0;
 	if(name[1] == 'A' || name[1] == 'B')
 	{
 		GPIO_TypeDef *GPIO_Reg_A;
-		if (PinState == MBCI_IO_HIGH)
+		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_A->BSRR = (uint16_t)0x0001<<GPIO_PIN;
 		}
@@ -228,7 +215,7 @@ void mbci_gpio_set(char *name, int value)
 	if(name[1] == 'C')
 	{
 		GPIOC_TypeDef *GPIO_Reg_C;
-		if (PinState == MBCI_IO_HIGH)
+		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_C->BSRR = (uint16_t)0x0001<<GPIO_PIN;
 		}
@@ -240,7 +227,7 @@ void mbci_gpio_set(char *name, int value)
 	if(name[1] == 'F')
 	{
 		GPIOF_TypeDef *GPIO_Reg_F;
-		if (PinState == MBCI_IO_HIGH)
+		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_F->BSRR = (uint16_t)0x0001<<GPIO_PIN;
 		}

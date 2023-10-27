@@ -2,6 +2,10 @@
 #include "cw32f030_rcc.h"
 #include "system_cw32f030.h"
 
+/*点亮最小系统板上的LED2
+ *对应的GPIO端口为"PC.13"
+ */
+
 int32_t main(void)
 {
     RCC_HSI_Enable(RCC_HSIOSC_DIV6);

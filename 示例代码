@@ -6,7 +6,7 @@
  *对应的GPIO端口为"PC.13"
  */
 
-int32_t main(void)
+int main(void)
 {
     RCC_HSI_Enable(RCC_HSIOSC_DIV6);
     __RCC_GPIOC_CLK_ENABLE();

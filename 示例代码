@@ -1,1 +1,15 @@
+#include "MBCI_GPIO.h"
+#include "cw32f030_rcc.h"
+#include "system_cw32f030.h"
+
+int32_t main(void)
+{
+    RCC_HSI_Enable(RCC_HSIOSC_DIV6);
+    __RCC_GPIOC_CLK_ENABLE();
+	 mbci_gpio_init("PC.13", MBCI_GPIO_IN_PULL_DOWN);
+    while (1)
+    {
+		  mbci_gpio_set("PC.13", MBCI_IO_LOW);
+    }
+}
 

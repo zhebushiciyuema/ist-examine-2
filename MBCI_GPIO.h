@@ -18,7 +18,7 @@
 #define MBCI_IO_HIGH 1
 #define MBCI_IO_LOW 0
 
-#define GPIO_PIN   (((uint16_t)name[3])*10+(uint16_t)name[4])
+#define GPIO_PIN   (((uint16_t)name[3])*10+(uint16_t)name[4])     //提取GPIO端口号
 
 /**
  * @brief GPIO 输入输出模式
@@ -66,41 +66,41 @@ void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
 		GPIO_TypeDef *GPIO_Reg_A;
 		if (dir == (MBCI_GPIO_IN_FLOATING | MBCI_GPIO_IN_PULL_UP | MBCI_GPIO_IN_PULL_DOWN))   //输入模式
 		{
-			REGBITS_SET(GPIO_Reg_A->DIR, GPIO_PIN);
+			REGBITS_SET(GPIO_Reg_A->DIR, (uint16_t)0x0001<<GPIO_PIN);
 			if (dir == MBCI_GPIO_IN_FLOATING) 
 			{
-				 REGBITS_SET(GPIO_Reg_A->PUR, GPIO_PIN);
-				 REGBITS_CLR(GPIO_Reg_A->PDR, GPIO_PIN);
+				 REGBITS_SET(GPIO_Reg_A->PUR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_A->PDR, (uint16_t)0x0001<<GPIO_PIN);
 			}
 			if (dir == MBCI_GPIO_IN_PULL_UP)
 			{
-				 REGBITS_SET(GPIO_Reg_A->PUR, GPIO_PIN);
-				 REGBITS_CLR(GPIO_Reg_A->PDR, GPIO_PIN);
+				 REGBITS_SET(GPIO_Reg_A->PUR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_A->PDR, (uint16_t)0x0001<<GPIO_PIN);
 			}
 			if (dir == MBCI_GPIO_IN_PULL_DOWN)
 			{
-				 REGBITS_SET(GPIO_Reg_A->PDR, GPIO_PIN);
-				 REGBITS_CLR(GPIO_Reg_A->PUR, GPIO_PIN);
+				 REGBITS_SET(GPIO_Reg_A->PDR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_A->PUR, (uint16_t)0x0001<<GPIO_PIN);
 			}
 		}
 		else                                                           //输出模式
 		{
-			REGBITS_CLR(GPIO_Reg_A->DIR, GPIO_PIN);
+			REGBITS_CLR(GPIO_Reg_A->DIR, (uint16_t)0x0001<<GPIO_PIN);
 			if (dir == MBCI_GPIO_OUT_PP)
 			{
-				 REGBITS_CLR(GPIO_Reg_A->OPENDRAIN, GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_A->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
 			}
 			else
 			{
-				 REGBITS_SET(GPIO_Reg_A->OPENDRAIN, GPIO_PIN);
+				 REGBITS_SET(GPIO_Reg_A->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
 			}
 			if (dir == MBCI_GPIO_OUT_OD)
 			{
-				 REGBITS_SET(GPIO_Reg_A->OPENDRAIN, GPIO_PIN);
+				 REGBITS_SET(GPIO_Reg_A->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
 			}
 			else
 			{
-				 REGBITS_CLR(GPIO_Reg_A->OPENDRAIN, GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_A->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
 			}
 		}
 	}

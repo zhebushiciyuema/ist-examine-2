@@ -18,7 +18,12 @@
 #define MBCI_IO_HIGH 1
 #define MBCI_IO_LOW 0
 
-#define GPIO_PIN   (((uint16_t)name[3])*10+(uint16_t)name[4])     //提取GPIO端口号
+#define GPIO_REG_A      ((GPIO_TypeDef*)0x48000000)
+#define GPIO_REG_B      ((GPIO_TypeDef*)0x48000400)
+#define GPIO_REG_C      ((GPIOC_TypeDef*)0x48000800)
+#define GPIO_REG_F      ((GPIOF_TypeDef*)0x48001400)
+
+#define GPIO_PIN   (((uint16_t)name[3])*10+(uint16_t)name[4])
 
 /**
  * @brief GPIO 输入输出模式
@@ -61,9 +66,9 @@ enum mbci_gpio_mode
  */
 void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
 {
-	if(name[1] == 'A' || name[1] == 'B')
+	if(name[1] == 'A')
 	{
-		GPIO_TypeDef *GPIO_Reg_A;
+		GPIO_TypeDef *GPIO_Reg_A = GPIO_REG_A;
 		if (dir == (MBCI_GPIO_IN_FLOATING | MBCI_GPIO_IN_PULL_UP | MBCI_GPIO_IN_PULL_DOWN))   //输入模式
 		{
 			REGBITS_SET(GPIO_Reg_A->DIR, (uint16_t)0x0001<<GPIO_PIN);
@@ -104,9 +109,52 @@ void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
 			}
 		}
 	}
+	if(name[1] == 'B')
+	{
+		GPIO_TypeDef *GPIO_Reg_B = GPIO_REG_B;
+		if (dir == (MBCI_GPIO_IN_FLOATING | MBCI_GPIO_IN_PULL_UP | MBCI_GPIO_IN_PULL_DOWN))   //输入模式
+		{
+			REGBITS_SET(GPIO_Reg_B->DIR, (uint16_t)0x0001<<GPIO_PIN);
+			if (dir == MBCI_GPIO_IN_FLOATING) 
+			{
+				 REGBITS_SET(GPIO_Reg_B->PUR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_B->PDR, (uint16_t)0x0001<<GPIO_PIN);
+			}
+			if (dir == MBCI_GPIO_IN_PULL_UP)
+			{
+				 REGBITS_SET(GPIO_Reg_B->PUR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_B->PDR, (uint16_t)0x0001<<GPIO_PIN);
+			}
+			if (dir == MBCI_GPIO_IN_PULL_DOWN)
+			{
+				 REGBITS_SET(GPIO_Reg_B->PDR, (uint16_t)0x0001<<GPIO_PIN);
+				 REGBITS_CLR(GPIO_Reg_B->PUR, (uint16_t)0x0001<<GPIO_PIN);
+			}
+		}
+		else                                                           //输出模式
+		{
+			REGBITS_CLR(GPIO_Reg_B->DIR, (uint16_t)0x0001<<GPIO_PIN);
+			if (dir == MBCI_GPIO_OUT_PP)
+			{
+				 REGBITS_CLR(GPIO_Reg_B->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
+			}
+			else
+			{
+				 REGBITS_SET(GPIO_Reg_B->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
+			}
+			if (dir == MBCI_GPIO_OUT_OD)
+			{
+				 REGBITS_SET(GPIO_Reg_B->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
+			}
+			else
+			{
+				 REGBITS_CLR(GPIO_Reg_B->OPENDRAIN, (uint16_t)0x0001<<GPIO_PIN);
+			}
+		}
+	}
 	if(name[1] == 'C')
 	{
-		GPIOC_TypeDef *GPIO_Reg_C;
+		GPIOC_TypeDef *GPIO_Reg_C = GPIO_REG_C;
 		if (dir == (MBCI_GPIO_IN_FLOATING | MBCI_GPIO_IN_PULL_UP | MBCI_GPIO_IN_PULL_DOWN))   //输入模式
 		{
 			REGBITS_SET(GPIO_Reg_C->DIR, (uint16_t)0x0001<<GPIO_PIN);
@@ -149,7 +197,7 @@ void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
 	}
 	if(name[1] == 'F')
 	{
-		GPIOF_TypeDef *GPIO_Reg_F;
+		GPIOF_TypeDef *GPIO_Reg_F = GPIO_REG_F;
 		if (dir == (MBCI_GPIO_IN_FLOATING | MBCI_GPIO_IN_PULL_UP | MBCI_GPIO_IN_PULL_DOWN))   //输入模式
 		{
 			REGBITS_SET(GPIO_Reg_F->DIR, (uint16_t)0x0001<<GPIO_PIN);
@@ -200,9 +248,9 @@ void mbci_gpio_init(char *name, enum mbci_gpio_mode dir)
  */
 void mbci_gpio_set(char *name, int value)
 {
-	if(name[1] == 'A' || name[1] == 'B')
+	if(name[1] == 'A')
 	{
-		GPIO_TypeDef *GPIO_Reg_A;
+		GPIO_TypeDef *GPIO_Reg_A = GPIO_REG_A;
 		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_A->BSRR = (uint16_t)0x0001<<GPIO_PIN;
@@ -212,9 +260,21 @@ void mbci_gpio_set(char *name, int value)
 			GPIO_Reg_A->BRR = (uint16_t)0x0001<<GPIO_PIN;
 		}
 	}
+	if(name[1] == 'B')
+	{
+		GPIO_TypeDef *GPIO_Reg_B = GPIO_REG_B;
+		if (value == MBCI_IO_HIGH)
+		{
+			GPIO_Reg_B->BSRR = (uint16_t)0x0001<<GPIO_PIN;
+		}
+		else
+		{
+			GPIO_Reg_B->BRR = (uint16_t)0x0001<<GPIO_PIN;
+		}
+	}
 	if(name[1] == 'C')
 	{
-		GPIOC_TypeDef *GPIO_Reg_C;
+		GPIOC_TypeDef *GPIO_Reg_C = GPIO_REG_C;
 		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_C->BSRR = (uint16_t)0x0001<<GPIO_PIN;
@@ -226,7 +286,7 @@ void mbci_gpio_set(char *name, int value)
 	}
 	if(name[1] == 'F')
 	{
-		GPIOF_TypeDef *GPIO_Reg_F;
+		GPIOF_TypeDef *GPIO_Reg_F = GPIO_REG_F;
 		if (value == MBCI_IO_HIGH)
 		{
 			GPIO_Reg_F->BSRR = (uint16_t)0x0001<<GPIO_PIN;
@@ -246,27 +306,36 @@ void mbci_gpio_set(char *name, int value)
  */
 int mbci_gpio_get(char *name)
 {
-   if(name[1] == 'A' || name[1] == 'B')
+   if(name[1] == 'A')
    {
-	   GPIO_TypeDef *GPIO_Reg_A;
+	   GPIO_TypeDef *GPIO_Reg_A = GPIO_REG_A;
 	   if (GPIO_Reg_A->IDR & (uint16_t)0x0001<<GPIO_PIN)
 	   {
 		  return (MBCI_IO_HIGH);
 	   }
 	   return (MBCI_IO_LOW);
 	}
-	if(name[1] == 'C')
+	else if(name[1] == 'B')
    {
-	   GPIOC_TypeDef *GPIO_Reg_C;
+	   GPIO_TypeDef *GPIO_Reg_B = GPIO_REG_B;
+	   if (GPIO_Reg_B->IDR & (uint16_t)0x0001<<GPIO_PIN)
+	   {
+		  return (MBCI_IO_HIGH);
+	   }
+	   return (MBCI_IO_LOW);
+	}
+	else if(name[1] == 'C')
+   {
+	   GPIOC_TypeDef *GPIO_Reg_C = GPIO_REG_C;
 	   if (GPIO_Reg_C->IDR & (uint16_t)0x0001<<GPIO_PIN)
 	   {
 		  return (MBCI_IO_HIGH);
 	   }
 	   return (MBCI_IO_LOW);
 	}
-	if(name[1] == 'F')
+	else if(name[1] == 'F')
    {
-	   GPIOF_TypeDef *GPIO_Reg_F;
+	   GPIOF_TypeDef *GPIO_Reg_F = GPIO_REG_F;
 	   if (GPIO_Reg_F->IDR & (uint16_t)0x0001<<GPIO_PIN)
 	   {
 		  return (MBCI_IO_HIGH);

@@ -10,7 +10,7 @@ int main(void)
 {
     RCC_HSI_Enable(RCC_HSIOSC_DIV6);
     __RCC_GPIOC_CLK_ENABLE();
-    mbci_gpio_init("PC.13", MBCI_GPIO_IN_PULL_DOWN);
+    mbci_gpio_init("PC.13", MBCI_GPIO_OUT_PP);
     while (1)
     {
 	mbci_gpio_set("PC.13", MBCI_IO_LOW);

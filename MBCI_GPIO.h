@@ -18,6 +18,7 @@
 #define MBCI_IO_HIGH 1
 #define MBCI_IO_LOW 0
 
+//寄存器基地址
 #define GPIO_REG_A      ((GPIO_TypeDef*)0x48000000)
 #define GPIO_REG_B      ((GPIO_TypeDef*)0x48000400)
 #define GPIO_REG_C      ((GPIOC_TypeDef*)0x48000800)
